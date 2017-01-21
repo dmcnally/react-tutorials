@@ -6,32 +6,31 @@
   var destination = document.querySelector("#container");
   
   var TodoItems = React.createClass({
-    getInitialState: function() {
+    getInitialState() {
       return {
         entries: this.props.entries
       };
     },
     
+    remove(e, item) {
+      todoEntries = todoEntries.splice(todoEntries.indexOf(item.key), 1);
+      
+      this.setState({
+        entries: todoEntries
+      });
+      
+      e.preventDefault();
+    },
     
-    render: function() {
+    render() {
       
       var todoEntries = this.state.entries;
       
-      function createTasks(item) {
-        var remove = function(e) {
-          todoEntries = todoEntries.splice(todoEntries.indexOf(item.key), 1);
-          
-          this.setState({
-            entries: todoEntries
-          });
-          
-          e.preventDefault();
-        }
-        
-        return <li key={item.key}>{item.text} <a href="" onClick={remove}>x</a></li>
+      this.createTasks = function(item) {
+        return <li key={item.key}>{item.text} <a href="" onClick={this.remove(item)}>x</a></li>
       }
 
-      var listItems = todoEntries.map(createTasks);
+      var listItems = todoEntries.map(this.createTasks);
       
       return (
         <ul className="theList">
