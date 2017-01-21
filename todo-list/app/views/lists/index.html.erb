@@ -6,11 +6,29 @@
   var destination = document.querySelector("#container");
   
   var TodoItems = React.createClass({
+    getInitialState: function() {
+      return {
+        entries: this.props.entries
+      };
+    },
+    
+    
     render: function() {
-      var todoEntries = this.props.entries;
+      
+      var todoEntries = this.state.entries;
       
       function createTasks(item) {
-        return <li key={item.key}>{item.text}</li>
+        var remove = function(e) {
+          todoEntries = todoEntries.splice(todoEntries.indexOf(item.key), 1);
+          
+          this.setState({
+            entries: todoEntries
+          });
+          
+          e.preventDefault();
+        }
+        
+        return <li key={item.key}>{item.text} <a href="" onClick={remove}>x</a></li>
       }
 
       var listItems = todoEntries.map(createTasks);
@@ -23,7 +41,7 @@
     }
   });
   
-  var TodoLists = React.createClass({
+  var TodoList = React.createClass({
     getInitialState: function() {
       return {
         items: []
@@ -48,31 +66,19 @@
     },
     
     render: function() {
-      var lists = this.props.lists;
-      
-      function createLists(list) {
-        return(
-          <div key={list.key}>
-            <div className="header">
-              {list.text}
-              <form onSubmit={this.addItem}>
-                <input ref={(a) => this._inputElement = a}
-                       placeholder="enter task">
-                </input>
-                <button type="submit">add</button>
-              </form>
-            </div>
-          
-            <TodoItems entries={this.state.items}/>
-          </div>
-        );
-      };
-      
-      var todoCategories = lists.map(createLists)
-      
       return(
-        <div>
-          {todoCategories}
+        <div key={this.props.key}>
+          <div className="header">
+            {this.props.text}
+            <form onSubmit={this.addItem}>
+              <input ref={(a) => this._inputElement = a}
+                     placeholder="enter task">
+              </input>
+              <button type="submit">add</button>
+            </form>
+          </div>
+          
+          <TodoItems entries={this.state.items}/>
         </div>
       );
     }
@@ -81,6 +87,7 @@
   var TodoCategories = React.createClass({
     getInitialState: function() {
       return {
+        listNames: [],
         lists: []
       };
     },
@@ -93,16 +100,17 @@
         key: Date.now()
       });
       
-      this.setState({
-        lists: listArray
-      });
-      
+      this.setState({listNames: listArray});
       this._inputElement.value = "";
-      
+    
       e.preventDefault();
     },
     
     render: function() {
+      var todoLists = this.state.listNames.map(function(list) {
+        return <TodoList text={list.text} key={list.key}/>
+      });
+      
       return(
         <div className="todoListCategories">
           <form onSubmit={this.addList}>
@@ -111,8 +119,8 @@
             </input>
             <button type="submit">add</button>
           </form>
-      
-          <TodoLists lists={this.state.lists}/>
+          
+          <div>{todoLists}</div>
         </div>
       );
     }
