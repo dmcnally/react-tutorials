@@ -4,9 +4,26 @@
 
 <script type="text/babel">
   var destination = document.querySelector("#container");
+  
+  var TodoList = React.createClass({
+    render: function() {
+      return(
+        <div className="todoListMain">
+          <div className="header">
+            <form>
+              <input placeholder="enter task">
+              </input>
+              <button type="submit">add</button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+  });
+  
   ReactDOM.render(
     <div>
-      hello!
+      <TodoList/>
     </div>, destination
   );
 </script>
