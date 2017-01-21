@@ -23,7 +23,7 @@
     }
   });
   
-  var TodoList = React.createClass({
+  var TodoLists = React.createClass({
     getInitialState: function() {
       return {
         items: []
@@ -48,18 +48,71 @@
     },
     
     render: function() {
-      return(
-        <div className="todoListMain">
-          <div className="header">
-            <form onSubmit={this.addItem}>
-              <input ref={(a) => this._inputElement = a}
-                     placeholder="enter task">
-              </input>
-              <button type="submit">add</button>
-            </form>
-          </div>
+      var lists = this.props.lists;
+      
+      function createLists(list) {
+        return(
+          <div key={list.key}>
+            <div className="header">
+              {list.text}
+              <form onSubmit={this.addItem}>
+                <input ref={(a) => this._inputElement = a}
+                       placeholder="enter task">
+                </input>
+                <button type="submit">add</button>
+              </form>
+            </div>
           
-          <TodoItems entries={this.state.items}/>
+            <TodoItems entries={this.state.items}/>
+          </div>
+        );
+      };
+      
+      var todoCategories = lists.map(createLists)
+      
+      return(
+        <div>
+          {todoCategories}
+        </div>
+      );
+    }
+  });
+  
+  var TodoCategories = React.createClass({
+    getInitialState: function() {
+      return {
+        lists: []
+      };
+    },
+    
+    addList: function(e) {
+      var listArray = this.state.lists;
+      
+      listArray.push({
+        text: this._inputElement.value,
+        key: Date.now()
+      });
+      
+      this.setState({
+        lists: listArray
+      });
+      
+      this._inputElement.value = "";
+      
+      e.preventDefault();
+    },
+    
+    render: function() {
+      return(
+        <div className="todoListCategories">
+          <form onSubmit={this.addList}>
+            <input ref={(a) => this._inputElement = a}
+                   placeholder="enter category">
+            </input>
+            <button type="submit">add</button>
+          </form>
+      
+          <TodoLists lists={this.state.lists}/>
         </div>
       );
     }
@@ -67,7 +120,7 @@
   
   ReactDOM.render(
     <div>
-      <TodoList/>
+      <TodoCategories/>
     </div>, destination
   );
 </script>
