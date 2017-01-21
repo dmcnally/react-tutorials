@@ -5,6 +5,24 @@
 <script type="text/babel">
   var destination = document.querySelector("#container");
   
+  var TodoItems = React.createClass({
+    render: function() {
+      var todoEntries = this.props.entries;
+      
+      function createTasks(item) {
+        return <li key={item.key}>{item.text}</li>
+      }
+
+      var listItems = todoEntries.map(createTasks);
+      
+      return (
+        <ul className="theList">
+          {listItems}
+        </ul>
+      );
+    }
+  });
+  
   var TodoList = React.createClass({
     getInitialState: function() {
       return {
@@ -40,6 +58,8 @@
               <button type="submit">add</button>
             </form>
           </div>
+          
+          <TodoItems entries={this.state.items}/>
         </div>
       );
     }
